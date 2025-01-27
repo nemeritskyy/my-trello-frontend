@@ -1,18 +1,27 @@
 <template>
-    <table class="card__item">
+  <table class="card__item">
     <th class="card__item-th">{{ title }}</th>
-      <tr v-for="(card, index) in cards" :key="index" class="card__item-tr">
-        <td>{{ card.title }}</td>
-      </tr>
-    </table>
+    <CardComponent v-for="card in cards" :key="card.id" :card="card" />
+    <tr>
+      <td>
+      <button class="button__add">
+        <span>Add Card</span>
+      </button>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { ICard } from '@/common/interfaces/card';
+import CardComponent from './Card.vue';
 
 export default Vue.extend({
   name: 'ListComponent',
+  components: {
+    CardComponent,
+  },
   props: {
     title: {
       type: String,
@@ -27,16 +36,6 @@ export default Vue.extend({
 </script>
 
 <style>
-.card__item {
-  display: block;
-  background-color: lightpink;
-  padding: 16px;
-  border: 1px solid crimson;
-  border-radius: 8px;
-  border-collapse: collapse;
-  box-shadow: 3px black;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
 .card__item-th {
   display: flex;
   background-color: white;
@@ -44,9 +43,5 @@ export default Vue.extend({
   height: 48px;
   align-items: center;
   justify-content: center;
-}
-.card__item-tr {
-  border-bottom: 1px dashed black;
-  height: 48px;
 }
 </style>
