@@ -1,8 +1,8 @@
 <template>
-    <table class="card__container-item">
-    <th class="card__container-item-th">{{ title }}</th>
-      <tr v-for="(card, index) in cards" :key="index">
-        {{ card.title }}
+    <table class="card__item">
+    <th class="card__item-th">{{ title }}</th>
+      <tr v-for="(card, index) in cards" :key="index" class="card__item-tr">
+        <td>{{ card.title }}</td>
       </tr>
     </table>
 </template>
@@ -27,16 +27,26 @@ export default Vue.extend({
 </script>
 
 <style>
-.card__container-item {
+.card__item {
   display: block;
   background-color: lightpink;
-  padding: 15px;
+  padding: 16px;
   border: 1px solid crimson;
-  border-radius: 5px;
+  border-radius: 8px;
+  border-collapse: collapse;
+  box-shadow: 3px black;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-.card__container-item-th {
-  text-decoration: underline;
+.card__item-th {
+  display: flex;
   background-color: white;
-  border-radius: 5px;
+  border-radius: 8px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+}
+.card__item-tr {
+  border-bottom: 1px dashed black;
+  height: 48px;
 }
 </style>

@@ -2,13 +2,14 @@
   <div>
     <h1>{{ title }}</h1>
     <div class="board__item">
-      <ListComponent
-        v-for="list in lists"
-        :key="list.id"
-        :title="list.title"
-        :cards="list.cards" />
+      <ListComponent v-for="list in lists" :key="list.id" :title="list.title" :cards="list.cards" />
+      <div class="button__add">
+        <span class="material-symbols-outlined">
+            add_circle
+        </span>
+      </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -59,5 +60,16 @@ export default Vue.extend({
   display: flex;
   flex-direction: row;
   gap: 20px;
+}
+
+.button__add {
+  display: flex;
+  text-align: center;
+  background-color: lightgreen;
+  padding: 15px;
+  border: 1px solid crimson;
+  border-radius: 5px;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 </style>
