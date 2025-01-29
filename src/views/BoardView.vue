@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ title }}</h1>
+    <h1>[{{$route.params.board_id}}] {{ title }}</h1>
     <div class="board__item">
       <div class="button__add">
         <span class="material-symbols-outlined">

@@ -11,7 +11,7 @@ const routes: Array<RouteConfig> = [
     component: HomeView,
   },
   {
-    path: '/board',
+    path: '/board/:board_id',
     name: 'board',
     component: () => import('../views/BoardView.vue'),
   },
