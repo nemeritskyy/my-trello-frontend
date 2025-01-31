@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { api } from '../common/constants';
 
 const instance = axios.create({
-  baseURL: api.baseURL,
+  baseURL: process.env.VUE_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer 123', // к этому мы ещё вернёмся как-нибудь потом
+    Authorization: 'Bearer 123',
   },
 });
 

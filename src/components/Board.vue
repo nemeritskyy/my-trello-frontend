@@ -8,14 +8,14 @@
 
 <script lang="ts">
 
-import Vue, { PropType } from 'vue';
-import { IItem } from '@/common/interfaces/item';
+import Vue from 'vue';
+import { BoardIExtendedItem } from '@/common/interfaces/board';
 
 export default Vue.extend({
   name: 'BoardComponent',
   props: {
     board: {
-      type: Object as PropType<IItem>,
+      type: Object as () => BoardIExtendedItem,
       required: true,
     },
   },
@@ -35,5 +35,6 @@ export default Vue.extend({
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   min-width: 200px;
   gap: 30px;
+  color: white;
 }
 </style>
