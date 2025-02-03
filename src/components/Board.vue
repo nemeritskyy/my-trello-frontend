@@ -26,15 +26,15 @@ export default Vue.extend({
 .desk__item {
   display: flex;
   align-items: center;
-  background-color: lightpink;
+  background-color: whitesmoke;
   padding: 16px;
-  border: 1px solid crimson;
   border-radius: 8px;
   border-collapse: collapse;
   box-shadow: 3px black;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   min-width: 200px;
   gap: 30px;
-  color: white;
+  color: brown;
+  text-transform: uppercase;
 }
 </style>

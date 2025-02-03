@@ -133,19 +133,4 @@ export default Vue.extend({
   flex-direction: row;
   gap: 20px;
 }
-
-.button__add {
-  width: 100%;
-  display: flex;
-  text-align: center;
-  background-color: lightgreen;
-  padding: 16px;
-  border: 1px solid crimson;
-  align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  justify-content: center;
-  gap: 10px;
-}
 </style>
