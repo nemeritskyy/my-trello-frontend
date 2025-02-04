@@ -7,6 +7,7 @@ npm run build
 cd dist
 
 git init
+git checkout -b develop
 git add -A
 git commit -m 'deploy'
 
