@@ -6,17 +6,7 @@
       <div>
         <button @click="showModal = true" class="button__add">Add desk</button>
 
-        <Modal v-if="showModal" @close="showModal = false">
-          <template #header>
-            <h3>Custom Header</h3>
-          </template>
-          <template #body>
-            <p>Some custom content inside the modal.</p>
-          </template>
-          <template #footer>
-            <button @click="showModal = false">Close</button>
-          </template>
-        </Modal>
+        <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema" />
       </div>
     </div>
   </div>
@@ -36,6 +26,19 @@ export default Vue.extend({
   data() {
     return {
       showModal: false,
+      formSchema: {
+        formName: 'Add New Desk',
+        fields: [
+          {
+            name: 'title',
+            label: 'Title',
+            type: 'text',
+            required: true,
+            minLength: 3,
+          },
+        ],
+        submitUrlPath: '/board',
+      },
     };
   },
   computed: {

@@ -1,33 +1,62 @@
 <template>
-    <transition name="modal">
-      <div class="modal-mask" @click.self="$emit('close')" @keydown.esc="$emit('close')"
-      tabindex="0">
-        <div class="modal-wrapper">
-          <div class="modal-container">
-            <div class="modal-header">
-              <slot name="header">Default Header</slot>
-            </div>
-            <div class="modal-body">
-              <slot name="body">Default Body</slot>
-            </div>
-            <div class="modal-footer">
-              <slot name="footer">
-                <button class="modal-default-button" @click="$emit('close')">
-                  OK
-                </button>
-              </slot>
-            </div>
+  <transition name="modal">
+    <div class="modal-mask" @click.self="$emit('close')" @keydown.esc="$emit('close')" tabindex="0"
+     id="modal">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h3>{{ formSchema.formName }}</h3>
+          </div>
+
+          <div class="modal-body">
+            <MyForm :formSchema="formSchema" @submit="handleFormSubmit" />
           </div>
         </div>
       </div>
-    </transition>
-  </template>
+    </div>
+  </transition>
+</template>
+
 <script>
+import MyForm from './MyForm.vue';
+
 export default {
   name: 'ModalDialog',
+  components: { MyForm },
+  props: {
+    formSchema: {
+      type: Object,
+      required: true,
+    },
+  },
+  methods: {
+    handleFormSubmit(formData) {
+      this.$emit('close');
+    },
+  },
 };
 </script>
-<style scoped>
+
+<style type="scss">
+  #modal {
+    h3 {
+      font-size: 32px;
+    }
+    label {
+      text-transform: uppercase;
+      display: flex;
+      gap: 10px;
+      background-color: rgb(231, 231, 231);
+      padding: 10px;
+      border-radius: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+    input {
+      height: 24px;
+      padding-left: 10px;
+    }
+  }
   .modal-mask {
     position: fixed;
     z-index: 9998;
@@ -42,19 +71,15 @@ export default {
   }
   .modal-container {
     width: 300px;
-    padding: 20px 30px;
+    padding: 20px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   }
   .modal-header h3 {
-    margin-top: 0;
     color: #42b983;
   }
   .modal-body {
     margin: 20px 0;
-  }
-  .modal-default-button {
-    float: right;
   }
 </style>
