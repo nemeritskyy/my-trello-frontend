@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>{{ $store.state.board.title }}</h1>
+    <LabelEditable
+      v-model="boardTitle"
+      name="title"
+      :id="labelId"
+    />
     <div class="board__item">
       <div class="button__add">
         <span class="material-symbols-outlined">
@@ -15,16 +19,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import LabelEditable from '@/components/LabelEditable.vue';
 import ListComponent from '../components/List.vue';
 
 export default Vue.extend({
   name: 'BoardView',
   components: {
     ListComponent,
+    LabelEditable,
   },
   computed: {
     board() {
       return this.$store.state.board;
+    },
+    boardTitle: {
+      get() {
+        return this.$store.state.board.title || '';
+      },
+    },
+    labelId: {
+      get() {
+        return this.$route.params.board_id || 'default-id';
+      },
     },
   },
   created() {

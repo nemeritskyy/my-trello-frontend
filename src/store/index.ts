@@ -1,4 +1,5 @@
 import api from '@/common/constants/api';
+import { BoardIExtendedItem } from '@/common/interfaces/board';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -6,9 +7,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    board: {},
+    board: {} as BoardIExtendedItem,
     boards: {
-      data: [],
+      data: [] as BoardIExtendedItem[],
     },
     user: {},
   },
@@ -35,6 +36,10 @@ export default new Vuex.Store({
     async getBoard({ commit }, boardId) {
       const response = await api.get(`/board/${boardId}`);
       commit('UPDATE_BOARD', response.data);
+    },
+    async updateBoardTitle({ dispatch }, { boardId, fieldName, newValue }) {
+      const payload = JSON.stringify({ [fieldName]: newValue });
+      await api.put(`board/${boardId}`, payload);
     },
   },
   modules: {
