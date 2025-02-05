@@ -41,6 +41,7 @@ export default Vue.extend({
             minLength: 3,
           },
         ],
+        actionName: 'createBoard',
         submitUrlPath: '/board',
       },
     };

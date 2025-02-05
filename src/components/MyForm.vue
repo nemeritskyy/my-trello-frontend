@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <div v-for="field in formSchema.fields" :key="field.name" class="form-group">
-      <label :for="field.name"
+      <label v-if="field.visible !== false" :for="field.name"
         >{{ field.label }}
         <input
           v-if="field.type !== 'textarea'"
@@ -13,7 +13,13 @@
           :maxlength="field.maxLength"
           :min="field.min"
           :max="field.max"
-      /></label>
+        />
+        <input
+          v-else
+          type="hidden"
+          :name="field.name"
+          v-model="formData[field.name]"
+        /></label>
     </div>
     <button type="submit" class="button__add">Add</button>
   </form>
@@ -37,12 +43,12 @@ export default {
     createInitialFormData() {
       const data = {};
       this.formSchema.fields.forEach((field) => {
-        data[field.name] = '';
+        data[field.name] = field.value !== undefined ? field.value : '';
       });
       return data;
     },
     async handleSubmit() {
-      await this.$store.dispatch('createBoard', {
+      await this.$store.dispatch(this.formSchema.actionName, {
         submitUrlPath: this.formSchema.submitUrlPath,
         boardData: this.formData,
       });

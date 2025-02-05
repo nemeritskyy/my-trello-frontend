@@ -33,6 +33,10 @@ export default new Vuex.Store({
       await api.post(submitUrlPath, boardData);
       await dispatch('getBoards');
     },
+    async createList({ dispatch }, { submitUrlPath, boardData }) {
+      await api.post(submitUrlPath, boardData);
+      await dispatch('getBoard', boardData.id);
+    },
     async getBoard({ commit }, boardId) {
       const response = await api.get(`/board/${boardId}`);
       commit('UPDATE_BOARD', response.data);
