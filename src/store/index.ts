@@ -19,6 +19,9 @@ export default new Vuex.Store({
     UPDATE_BOARDS(state, boards) {
       state.boards.data = boards;
     },
+    UPDATE_BOARD(state, board) {
+      state.board = board;
+    },
   },
   actions: {
     async getBoards({ commit }) {
@@ -28,6 +31,10 @@ export default new Vuex.Store({
     async createBoard({ dispatch }, { submitUrlPath, boardData }) {
       await api.post(submitUrlPath, boardData);
       await dispatch('getBoards');
+    },
+    async getBoard({ commit }, boardId) {
+      const response = await api.get(`/board/${boardId}`);
+      commit('UPDATE_BOARD', response.data);
     },
   },
   modules: {
