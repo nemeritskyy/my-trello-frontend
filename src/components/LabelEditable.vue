@@ -73,7 +73,7 @@ export default Vue.extend({
 <style type="css">
 .label__editable {
   font-size: 36px;
-  margin-bottom: 10px;
+  margin: 10px;
   text-align: center;
 }
 .editing {

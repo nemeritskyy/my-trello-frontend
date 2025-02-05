@@ -1,9 +1,8 @@
 <template>
   <div id="app">
-    <!-- <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/board">Board</router-link>
-    </nav> -->
+    <nav>
+      <router-link to="/">All desks</router-link>
+    </nav>
     <router-view />
   </div>
 </template>
@@ -40,12 +39,17 @@ body {
 }
 
 nav {
-  padding: 30px;
+  display: inline;
+  padding: 10px;
+  background-color: white;
+  width: 300px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 a {
   font-weight: bold;
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
 
   &.router-link-exact-active {
@@ -57,7 +61,6 @@ a {
   display: flex;
   border-radius: 20px;
   height: 100%;
-  width: 100%;
   background-color: #9BC53D;
   padding: 16px;
   border: 0px;

@@ -15,7 +15,7 @@
           :max="field.max"
       /></label>
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit" class="button__add">Add</button>
   </form>
 </template>
 

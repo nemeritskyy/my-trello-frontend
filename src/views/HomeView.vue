@@ -1,10 +1,14 @@
 <template>
-  <div>
+  <div class="main__container">
     <h1>My Desks</h1>
     <div class="desk__container">
       <BoardComponent v-for="board in boards" :key="board.id" :board="board" />
       <div>
-        <button @click="showModal = true" class="button__add">Add desk</button>
+        <button @click="showModal = true" class="button__add">
+          <span class="material-symbols-outlined">
+          add_circle
+          </span>
+        </button>
 
         <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema" />
       </div>
@@ -53,8 +57,17 @@ export default Vue.extend({
 </script>
 
 <style>
+.main__container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
 .desk__container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 30px;
 }
 </style>

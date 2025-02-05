@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div class="board__container">
     <LabelEditable
       v-model="boardTitle"
       name="title"
       :id="labelId"
     />
     <div class="board__item">
+      <ListComponent v-for="list in board && board.lists ? board.lists : []" :key="list.id"
+      :title="list.title" :cards="list.cards" />
       <div class="button__add">
         <span class="material-symbols-outlined">
           add_circle
         </span>
       </div>
-      <ListComponent v-for="list in board && board.lists ? board.lists : []" :key="list.id"
-      :title="list.title" :cards="list.cards" />
     </div>
   </div>
 </template>
@@ -53,6 +53,9 @@ export default Vue.extend({
 </script>
 
 <style>
+.board__container {
+  margin: 10px;
+}
 .board__item {
   display: flex;
   flex-direction: row;
