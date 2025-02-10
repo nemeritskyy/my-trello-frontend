@@ -1,5 +1,5 @@
 <template>
-    <div class="card__item-tr">
+    <div class="card__item-row">
       <span>{{ card.title }}</span>
     </div>
 </template>
@@ -35,8 +35,11 @@ export default Vue.extend({
   row-gap: 16px;
 }
 
-.card__item-tr {
+.card__item-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 16px;
   border-bottom: 1px dashed black;
-  height: 48px;
 }
 </style>
