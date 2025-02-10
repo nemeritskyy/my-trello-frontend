@@ -4,10 +4,12 @@
       v-model="boardTitle"
       name="title"
       :id="labelId"
+      :api="`board/${$route.params.board_id}`"
+      custom-class="label__editable"
     />
     <div class="board__item">
       <ListComponent v-for="list in board && board.lists ? board.lists : []" :key="list.id"
-      :title="list.title" :cards="list.cards" />
+      :title="list.title" :cards="list.cards" :id="list.id"/>
       <button @click="showModal = true" class="button__add">
           <span class="material-symbols-outlined">
           add_circle

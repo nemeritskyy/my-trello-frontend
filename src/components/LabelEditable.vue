@@ -4,10 +4,10 @@
       <input
         ref="editableInput"
         :id="id"
+        :api="api"
         :value="inputValue"
         :name="name"
-        class="label__editable"
-        :class="{'editing': isEditing, 'not-editing': !isEditing}"
+        :class="[ customClass, { editing: isEditing, 'not-editing': !isEditing } ]"
         @focus="onFocus"
         @blur="offFocus"
         @keyup.enter="offFocus"
@@ -33,8 +33,16 @@ export default Vue.extend({
       required: true,
     },
     id: {
+      type: [String, Number],
+      required: true,
+    },
+    api: {
       type: String,
       required: true,
+    },
+    customClass: {
+      type: String,
+      required: false,
     },
   },
   data() {
@@ -54,7 +62,10 @@ export default Vue.extend({
       }
     },
     updateTitle() {
-      this.$store.dispatch('updateBoardTitle', { boardId: this.id, fieldName: this.name, newValue: this.inputValue });
+      this.$store.dispatch(
+        'updateTitle',
+        { apiPath: this.api, fieldName: this.name, newValue: this.inputValue },
+      );
       this.$emit('update', this.inputValue);
       (this.$refs.editableInput as HTMLInputElement).blur();
     },
@@ -75,15 +86,22 @@ export default Vue.extend({
   font-size: 36px;
   margin: 10px;
   text-align: center;
+  max-width: 300px;
+}
+.label__editable:hover {
+  max-width: 300px;
 }
 .editing {
   border: 2px solid black;
   background-color: white;
-  max-width: 300px;
 }
 .not-editing {
   border: 2px solid transparent;
   background: transparent;
   max-width: none;
+}
+.not-editing:hover {
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>

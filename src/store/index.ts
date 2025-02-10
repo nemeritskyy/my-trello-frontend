@@ -41,9 +41,9 @@ export default new Vuex.Store({
       const response = await api.get(`/board/${boardId}`);
       commit('UPDATE_BOARD', response.data);
     },
-    async updateBoardTitle({ dispatch }, { boardId, fieldName, newValue }) {
+    async updateTitle({ dispatch }, { apiPath, fieldName, newValue }) {
       const payload = JSON.stringify({ [fieldName]: newValue });
-      await api.put(`board/${boardId}`, payload);
+      await api.put(apiPath, payload);
     },
   },
   modules: {

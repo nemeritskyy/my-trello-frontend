@@ -1,7 +1,7 @@
 <template>
-      <tr class="card__item-tr">
-        <td>{{ card.title }}</td>
-      </tr>
+    <div class="card__item-tr">
+      <span>{{ card.title }}</span>
+    </div>
 </template>
 
 <script lang="ts">
@@ -21,7 +21,9 @@ export default Vue.extend({
 
 <style>
 .card__item {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background-color: lightpink;
   padding: 16px;
   border: 1px solid crimson;
@@ -30,6 +32,7 @@ export default Vue.extend({
   box-shadow: 3px black;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   min-width: 200px;
+  row-gap: 16px;
 }
 
 .card__item-tr {
