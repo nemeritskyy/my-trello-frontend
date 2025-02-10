@@ -88,10 +88,11 @@ a {
 
 .lds-circle,
 .lds-circle div {
+  color: white;
   box-sizing: border-box;
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: calc(50% - 32px);
+  left: calc(50% - 32px);
   transform: translate(-50%, -50%);
   z-index: 9999;
   display: none;
