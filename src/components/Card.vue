@@ -36,6 +36,7 @@ export default Vue.extend({
 }
 
 .card__item-row {
+  font-family: "Montserrat", sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;

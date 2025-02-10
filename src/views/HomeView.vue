@@ -3,7 +3,8 @@
     <h1>My Desks</h1>
     <div class="desk__container">
       <BoardComponent v-for="board in boards" :key="board.id" :board="board" />
-      <div>
+    </div>
+    <div class="main__container-add-button">
         <button @click="showModal = true" class="button__add">
           <span class="material-symbols-outlined">
           add_circle
@@ -12,7 +13,6 @@
 
         <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema" />
       </div>
-    </div>
   </div>
 </template>
 
@@ -70,5 +70,8 @@ export default Vue.extend({
   flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
+}
+.main__container-add-button {
+  margin-top: 24px;
 }
 </style>

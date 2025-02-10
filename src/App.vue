@@ -10,7 +10,7 @@
 </template>
 
 <style lang="scss">
-@import url(https://fonts.googleapis.com/css?family=Lato:300);
+@import url(https://fonts.googleapis.com/css2?family=Lato:300&family=Montserrat:300);
 
 html, body {
   margin: 0;
