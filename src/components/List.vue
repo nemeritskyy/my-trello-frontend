@@ -6,6 +6,7 @@
       name="title"
       :id="id"
       :api="`board/${$route.params.board_id}/list/${id}`"
+      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLenght"
       custom-class="cart__item-label"
     />
   </div>

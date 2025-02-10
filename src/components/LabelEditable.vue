@@ -8,6 +8,7 @@
         :value="inputValue"
         :name="name"
         :class="[ customClass, { editing: isEditing, 'not-editing': !isEditing } ]"
+        :minlength="minLength"
         @focus="onFocus"
         @blur="offFocus"
         @keyup.enter="offFocus"
@@ -20,6 +21,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 export default Vue.extend({
   name: 'EditableInput',
@@ -40,6 +43,10 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    minLength: {
+      type: Number,
+      required: true,
+    },
     customClass: {
       type: String,
       required: false,
@@ -56,9 +63,19 @@ export default Vue.extend({
       this.isEditing = true;
     },
     offFocus(event: Event) {
-      if (this.isEditing) {
+      if (this.isEditing && (this.inputValue.length >= this.minLength)) {
         this.isEditing = false;
         this.updateTitle();
+      } else {
+        const editableInput = event.target as HTMLInputElement;
+        if (editableInput) {
+          const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'right', y: 'top' },
+          });
+          editableInput.style.borderColor = 'red';
+          notyf.error(`Minimal length for this input is ${this.minLength} symbol(s)`);
+        }
       }
     },
     updateTitle() {

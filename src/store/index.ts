@@ -12,6 +12,7 @@ export default new Vuex.Store({
       data: [] as BoardIExtendedItem[],
     },
     user: {},
+    defaultMinLenght: 2,
   },
   getters: {
     boards: (state) => state.boards.data || [],
