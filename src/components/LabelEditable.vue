@@ -10,8 +10,8 @@
         :class="[ customClass, { editing: isEditing, 'not-editing': !isEditing } ]"
         :minlength="minLength"
         @focus="onFocus"
-        @blur="offFocus"
-        @keyup.enter="offFocus"
+        @blur="onBlur"
+        @keyup.enter="onEnter"
         @input="onInput"
         type="text"
       />
@@ -56,26 +56,32 @@ export default Vue.extend({
     return {
       isEditing: false,
       inputValue: this.value,
+      notyf: new Notyf({
+        duration: 4000,
+        position: { x: 'right', y: 'top' },
+      }),
     };
   },
   methods: {
+    onBlur(event: Event) {
+      this.offFocus(event);
+    },
+    onEnter(event: KeyboardEvent) {
+      const editableInput = event.target as HTMLInputElement;
+      editableInput.blur();
+    },
     onFocus() {
       this.isEditing = true;
     },
     offFocus(event: Event) {
+      const editableInput = event.target as HTMLInputElement;
       if (this.isEditing && (this.inputValue.length >= this.minLength)) {
+        editableInput.style.borderColor = 'transparent';
         this.isEditing = false;
         this.updateTitle();
       } else {
-        const editableInput = event.target as HTMLInputElement;
-        if (editableInput) {
-          const notyf = new Notyf({
-            duration: 4000,
-            position: { x: 'right', y: 'top' },
-          });
-          editableInput.style.borderColor = 'red';
-          notyf.error(`Minimal length for this input is ${this.minLength} symbol(s)`);
-        }
+        editableInput.style.borderColor = 'red';
+        this.notyf.error(`Minimal length for this input is ${this.minLength} symbol(s)`);
       }
     },
     updateTitle() {
