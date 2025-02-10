@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <div id="loader" class="modal-mask">
+    <div class="lds-circle"><div></div></div></div>
     <nav>
       <router-link to="/">All desks</router-link>
     </nav>
@@ -81,6 +83,45 @@ a {
   font-size: 16px;
   &:hover{
     color: #FDE74C;
+  }
+}
+
+.lds-circle,
+.lds-circle div {
+  box-sizing: border-box;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none;
+}
+.lds-circle {
+  display: inline-block;
+  transform: translateZ(1px);
+}
+.lds-circle > div {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+@keyframes lds-circle {
+  0%, 100% {
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+  }
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(1800deg);
+    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  }
+  100% {
+    transform: rotateY(3600deg);
   }
 }
 </style>
