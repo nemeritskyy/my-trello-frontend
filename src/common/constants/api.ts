@@ -1,4 +1,11 @@
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 import axios from 'axios';
+
+const notyf = new Notyf({
+  duration: 4000,
+  position: { x: 'right', y: 'top' },
+});
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_API_URL || '',
@@ -26,6 +33,7 @@ instance.interceptors.request.use(
   },
   (error) => {
     toggleLoader('hide');
+    notyf.error(error.response?.data?.message || 'Request error');
     return Promise.reject(error);
   },
 );
@@ -37,6 +45,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     toggleLoader('hide');
+    notyf.error(error.response?.data?.message || 'Request error');
     return Promise.reject(error);
   },
 );
