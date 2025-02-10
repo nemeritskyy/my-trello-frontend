@@ -10,6 +10,11 @@
 <style lang="scss">
 @import url(https://fonts.googleapis.com/css?family=Lato:300);
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
   background-size: 400% 400%;
@@ -36,15 +41,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 nav {
-  display: inline;
+  display: block;
   padding: 10px;
   background-color: white;
-  width: 300px;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
+  margin: 0 auto;
 }
 
 a {

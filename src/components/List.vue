@@ -13,15 +13,17 @@
     <CardComponent :card="card" />
   </div>
   <div class="card__item-footer">
-    <button class="button__add">
+    <button @click="showModal = true" class="button__add">
       <span>Add Card</span>
     </button>
   </div>
+  <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema" />
 </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Modal from '@/components/Modal.vue';
 import { ICard } from '@/common/interfaces/card';
 import CardComponent from './Card.vue';
 import LabelEditable from './LabelEditable.vue';
@@ -31,6 +33,7 @@ export default Vue.extend({
   components: {
     LabelEditable,
     CardComponent,
+    Modal,
   },
   props: {
     title: {
@@ -45,6 +48,45 @@ export default Vue.extend({
       type: Array as () => ICard[],
       required: true,
     },
+  },
+  data() {
+    return {
+      showModal: false,
+      formSchema: {
+        formName: `Add New Card to ${this.title}`,
+        fields: [
+          {
+            name: 'title',
+            label: 'Title',
+            type: 'text',
+            required: true,
+            minLength: 3,
+          },
+          {
+            name: 'list_id',
+            label: 'List ID',
+            visible: false,
+            value: this.id,
+          },
+          {
+            name: 'board_id',
+            label: 'Board ID',
+            visible: false,
+            value: this.$route.params.board_id,
+          },
+          {
+            name: 'position',
+            label: 'Position',
+            visible: false,
+            value: ((this.$store.state.board.lists?.find(
+              (list: { id: number; cards: any[] }) => list.id === this.id,
+            )?.cards?.length || 0) + 1), // need to fix last position logic
+          },
+        ],
+        actionName: 'createCard',
+        submitUrlPath: `/board/${this.$route.params.board_id}/card`,
+      },
+    };
   },
   computed: {
     listTitle: {
