@@ -5,7 +5,7 @@
       name="title"
       :id="labelId"
       :api="`board/${$route.params.board_id}`"
-      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLenght"
+      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLength"
       custom-class="label__editable"
     />
     <div class="board__item">

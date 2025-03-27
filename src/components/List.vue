@@ -6,7 +6,7 @@
       name="title"
       :id="id"
       :api="`board/${$route.params.board_id}/list/${id}`"
-      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLenght"
+      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLength"
       custom-class="cart__item-label"
     />
   </div>
@@ -14,7 +14,7 @@
     <CardComponent :card="card" />
   </div>
   <div class="card__item-footer">
-    <button @click="showModal = true" class="button__add">
+    <button @click="openModal" class="button__add">
       <span>Add Card</span>
     </button>
   </div>
@@ -79,9 +79,6 @@ export default Vue.extend({
             name: 'position',
             label: 'Position',
             visible: false,
-            value: ((this.$store.state.board.lists?.find(
-              (list: { id: number; cards: any[] }) => list.id === this.id,
-            )?.cards?.length || 0) + 1), // need to fix last position logic
           },
         ],
         actionName: 'createCard',
@@ -94,9 +91,25 @@ export default Vue.extend({
       get() : string {
         return this.title;
       },
-      set(newTitle: string) {
-        this.$emit('update:title', newTitle);
-      },
+    },
+  },
+  methods: {
+    getNextPosition(): number {
+      const lists = this.$store.state.board.lists?.find(
+        (list: { id: number; cards: ICard[] }) => list.id === this.id,
+      );
+      if (!lists || !lists.cards || lists.cards.length === 0) {
+        return 0;
+      }
+      const lastPosition = Math.max(...lists.cards.map((card: ICard) => card.position));
+      return lastPosition + 1;
+    },
+    openModal() {
+      const positionField = this.formSchema.fields.find((field) => field.name === 'position');
+      if (positionField) {
+        positionField.value = this.getNextPosition();
+      }
+      this.showModal = true;
     },
   },
 });

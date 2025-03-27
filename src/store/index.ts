@@ -12,7 +12,7 @@ export default new Vuex.Store({
       data: [] as BoardIExtendedItem[],
     },
     user: {},
-    defaultMinLenght: 2,
+    defaultMinLength: 2,
   },
   getters: {
     boards: (state) => state.boards.data || [],
@@ -40,7 +40,6 @@ export default new Vuex.Store({
     },
     async createCard({ dispatch }, { submitUrlPath, boardData }) {
       await api.post(submitUrlPath, boardData);
-      console.log(boardData);
       await dispatch('getBoard', boardData.board_id);
     },
     async getBoard({ commit }, boardId) {

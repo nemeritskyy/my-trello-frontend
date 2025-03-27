@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <div id="loader" class="modal-mask">
-    <div class="lds-circle"><div></div></div></div>
+      <div class="lds-circle">
+        <div></div>
+      </div>
+    </div>
     <nav>
       <router-link to="/">All desks</router-link>
     </nav>
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-@import url(https://fonts.googleapis.com/css2?family=Lato:300&family=Montserrat:300);
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Tenor+Sans&display=swap');
 
 html, body {
   margin: 0;
@@ -81,7 +84,8 @@ a {
   justify-content: center;
   color: #ffffff;
   font-size: 16px;
-  &:hover{
+
+  &:hover {
     color: #FDE74C;
   }
 }
@@ -97,10 +101,12 @@ a {
   z-index: 9999;
   display: none;
 }
+
 .lds-circle {
   display: inline-block;
   transform: translateZ(1px);
 }
+
 .lds-circle > div {
   display: inline-block;
   width: 64px;
@@ -110,6 +116,7 @@ a {
   border-radius: 50%;
   animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
+
 @keyframes lds-circle {
   0%, 100% {
     animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
