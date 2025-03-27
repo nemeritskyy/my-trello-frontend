@@ -9,13 +9,13 @@
 <script lang="ts">
 
 import Vue from 'vue';
-import { BoardIExtendedItem } from '@/common/interfaces/board';
+import { IBoard } from '@/common/interfaces/board';
 
 export default Vue.extend({
   name: 'BoardComponent',
   props: {
     board: {
-      type: Object as () => BoardIExtendedItem,
+      type: Object as () => IBoard,
       required: true,
     },
   },
@@ -24,17 +24,18 @@ export default Vue.extend({
 
 <style>
 .desk__item {
-  display: flex;
-  align-items: center;
+  text-align: center;
   background-color: whitesmoke;
   padding: 16px;
   border-radius: 8px;
   border-collapse: collapse;
-  box-shadow: 3px black;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: grey 0 3px 8px;
   min-width: 200px;
   gap: 30px;
   color: brown;
   text-transform: uppercase;
+}
+.desk__item:hover {
+  box-shadow: #23d5ab 0 3px 8px;
 }
 </style>

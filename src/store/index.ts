@@ -1,5 +1,5 @@
 import api from '@/api/index';
-import { BoardIExtendedItem } from '@/common/interfaces/board';
+import { IBoard } from '@/common/interfaces/board';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -7,9 +7,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    board: {} as BoardIExtendedItem,
+    board: {} as IBoard,
     boards: {
-      data: [] as BoardIExtendedItem[],
+      data: [] as IBoard[],
     },
     user: {},
     defaultMinLength: 2,
@@ -27,30 +27,67 @@ export default new Vuex.Store({
   },
   actions: {
     async getBoards({ commit }) {
-      const response = await api.get('/board');
-      commit('UPDATE_BOARDS', response.data.boards);
-    },
-    async createBoard({ dispatch }, { submitUrlPath, boardData }) {
-      await api.post(submitUrlPath, boardData);
-      await dispatch('getBoards');
-    },
-    async createList({ dispatch }, { submitUrlPath, boardData }) {
-      await api.post(submitUrlPath, boardData);
-      await dispatch('getBoard', boardData.id);
-    },
-    async createCard({ dispatch }, { submitUrlPath, boardData }) {
-      await api.post(submitUrlPath, boardData);
-      await dispatch('getBoard', boardData.board_id);
+      try {
+        const response = await api.get('/board');
+        commit('UPDATE_BOARDS', response.data.boards);
+      } catch (error) {
+        console.error('Failed to fetch boards:', error);
+      }
     },
     async getBoard({ commit }, boardId) {
-      const response = await api.get(`/board/${boardId}`);
-      commit('UPDATE_BOARD', response.data);
+      try {
+        const response = await api.get(`/board/${boardId}`);
+        commit('UPDATE_BOARD', response.data);
+      } catch (error) {
+        console.error('Failed to fetch boards:', error);
+      }
     },
-    async updateTitle({ dispatch }, { apiPath, fieldName, newValue }) {
-      const payload = JSON.stringify({ [fieldName]: newValue });
-      await api.put(apiPath, payload);
+    async createBoard({ dispatch }, payload) {
+      await dispatch('createEntity', {
+        ...payload,
+        dispatchAction: 'getBoards',
+      });
+    },
+    async createList({ dispatch }, payload) {
+      await dispatch('createEntity', {
+        ...payload,
+        dispatchAction: 'getBoard',
+        dispatchId: payload.boardData.id,
+      });
+    },
+    async createCard({ dispatch }, payload) {
+      await dispatch('createEntity', {
+        ...payload,
+        dispatchAction: 'getBoard',
+      });
+    },
+    async updateTitle({ dispatch }, {
+      apiPath,
+      fieldName,
+      newValue,
+    }) {
+      try {
+        const payload = JSON.stringify({ [fieldName]: newValue });
+        await api.put(apiPath, payload);
+      } catch (error) {
+        console.error(`Failed to update title apiPath ${apiPath}:`, error);
+      }
+    },
+    async createEntity({ dispatch }, {
+      submitUrlPath,
+      boardData,
+      dispatchAction,
+      dispatchId,
+    }) {
+      try {
+        await api.post(submitUrlPath, boardData);
+        if (dispatchAction) {
+          await dispatch(dispatchAction, dispatchId || boardData.board_id);
+        }
+      } catch (error) {
+        console.error(`Failed to create entity at ${submitUrlPath}:`, error);
+      }
     },
   },
-  modules: {
-  },
+  modules: {},
 });

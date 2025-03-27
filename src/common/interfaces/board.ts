@@ -1,5 +1,5 @@
-import { IItem } from './item';
-
-export interface BoardIExtendedItem extends IItem {
+export interface IBoard {
+  id: number;
+  title: string;
   custom?: string;
 }
