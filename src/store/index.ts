@@ -1,4 +1,4 @@
-import api from '@/common/constants/api';
+import api from '@/api/index';
 import { BoardIExtendedItem } from '@/common/interfaces/board';
 import Vue from 'vue';
 import Vuex from 'vuex';
