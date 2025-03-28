@@ -1,6 +1,6 @@
 <template>
-    <div class="card__item-row">
-      <span>{{ card.title }}</span>
+    <div class="card__item-row break-word">
+      {{ card.title }}
     </div>
 </template>
 
@@ -29,9 +29,9 @@ export default Vue.extend({
   border: 1px solid crimson;
   border-radius: 8px;
   border-collapse: collapse;
-  box-shadow: 3px black;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 30px;
   min-width: 200px;
+  max-width: 200px;
   row-gap: 16px;
 }
 

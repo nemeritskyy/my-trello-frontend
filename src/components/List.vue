@@ -1,25 +1,25 @@
 <template>
-<div class="card__item">
-  <div class="card__item-title">
-    <LabelEditable
-      v-model="listTitle"
-      name="title"
-      :id="id"
-      :api="`board/${$route.params.board_id}/list/${id}`"
-      :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLength"
-      custom-class="cart__item-label"
-    />
+  <div class="card__item">
+    <div class="card__item-title">
+      <LabelEditable
+        v-model="listTitle"
+        name="title"
+        :id="id"
+        :api="`board/${$route.params.board_id}/list/${id}`"
+        :minLength="formSchema.fields[0]?.minLength ?? $store.state.defaultMinLength"
+        custom-class="cart__item-label"
+      />
+    </div>
+    <div v-for="card in cards" :key="card.id">
+      <CardComponent :card="card"/>
+    </div>
+    <div class="card__item-footer">
+      <button @click="openModal" class="button__add">
+        <span>Add Card</span>
+      </button>
+    </div>
+    <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema"/>
   </div>
-  <div v-for="card in cards" :key="card.id">
-    <CardComponent :card="card" />
-  </div>
-  <div class="card__item-footer">
-    <button @click="openModal" class="button__add">
-      <span>Add Card</span>
-    </button>
-  </div>
-  <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema" />
-</div>
 </template>
 
 <script lang="ts">
@@ -88,7 +88,7 @@ export default Vue.extend({
   },
   computed: {
     listTitle: {
-      get() : string {
+      get(): string {
         return this.title;
       },
     },
@@ -120,21 +120,24 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
 }
+
 .cart__item-label {
   font-size: 18px;
   max-width: 150px;
 }
+
 .cart__item-label:hover {
   background-color: lightgray;
   font-size: 18px;
 }
+
 .card__item-title {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   display: flex;
   background-color: white;
   border-radius: 8px;
-  height: 48px;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
 }

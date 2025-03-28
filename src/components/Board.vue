@@ -1,9 +1,9 @@
 <template>
-    <router-link :to="'/board/' + $props.board.id">
-        <div class="desk__item">
-            {{ $props.board.title }}
-        </div>
-    </router-link>
+  <router-link :to="'/board/' + $props.board.id">
+    <div class="desk__item">
+      {{ $props.board.title }}
+    </div>
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -34,7 +34,12 @@ export default Vue.extend({
   gap: 30px;
   color: brown;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 460px;
 }
+
 .desk__item:hover {
   box-shadow: #23d5ab 0 3px 8px;
 }

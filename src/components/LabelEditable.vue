@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div
+      v-if="!isEditing"
+      @click="startEditing"
+      @keydown.enter="startEditing"
+      :class="[customClass, { editing: isEditing, 'not-editing': !isEditing }, 'break-word']"
+    >
+      {{ inputValue }}
+    </div>
     <label :for="id">
       <input
         ref="editableInput"
@@ -14,6 +22,7 @@
         @keyup.enter="onEnter"
         @input="onInput"
         type="text"
+        v-show="isEditing"
       />
     </label>
   </div>
@@ -58,7 +67,10 @@ export default Vue.extend({
       inputValue: this.value,
       notyf: new Notyf({
         duration: 4000,
-        position: { x: 'right', y: 'top' },
+        position: {
+          x: 'right',
+          y: 'top',
+        },
       }),
     };
   },
@@ -87,13 +99,23 @@ export default Vue.extend({
     updateTitle() {
       this.$store.dispatch(
         'updateTitle',
-        { apiPath: this.api, fieldName: this.name, newValue: this.inputValue },
+        {
+          apiPath: this.api,
+          fieldName: this.name,
+          newValue: this.inputValue,
+        },
       );
       this.$emit('update', this.inputValue);
       (this.$refs.editableInput as HTMLInputElement).blur();
     },
     onInput(event: Event) {
       this.inputValue = (event.target as HTMLInputElement).value;
+    },
+    startEditing() {
+      this.isEditing = true;
+      this.$nextTick(() => {
+        (this.$refs.editableInput as HTMLInputElement).focus();
+      });
     },
   },
   watch: {
@@ -111,18 +133,18 @@ export default Vue.extend({
   text-align: center;
   max-width: 300px;
 }
-.label__editable:hover {
-  max-width: 300px;
-}
+
 .editing {
   border: 2px solid black;
   background-color: white;
 }
+
 .not-editing {
   border: 2px solid transparent;
   background: transparent;
   max-width: none;
 }
+
 .not-editing:hover {
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.2);
