@@ -13,6 +13,7 @@ export default new Vuex.Store({
     },
     user: {},
     defaultMinLength: 2,
+    draggingElement: String,
   },
   getters: {
     boards: (state) => state.boards.data || [],
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     UPDATE_BOARD(state, board) {
       state.board = board;
+    },
+    setDraggingElement(state, element) {
+      state.draggingElement = element;
     },
   },
   actions: {

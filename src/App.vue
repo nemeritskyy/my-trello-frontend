@@ -72,14 +72,13 @@ a {
 }
 
 .button__add {
+  width: 100%;
   display: flex;
-  border-radius: 20px;
-  height: 100%;
+  border-radius: 5px;
   background-color: #9BC53D;
   padding: 16px;
-  border: 0;
   align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+  border: 1px solid grey;
   cursor: pointer;
   text-transform: uppercase;
   justify-content: center;
