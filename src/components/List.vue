@@ -167,6 +167,7 @@ export default Vue.extend({
         newContainerId,
         newPosition,
       } = this.draggingElementDetails;
+      if (position == null || newPosition == null) return;
 
       const oldList = this.getListWithCardContainerId(parentContainer);
       const newList = this.getListWithCardContainerId(newContainerId);
