@@ -52,7 +52,6 @@ export default Vue.extend({
             name: 'position',
             label: 'Position',
             visible: false,
-            value: (this.$store.state.board.lists?.length || 0) + 1,
           },
           {
             name: 'id',
@@ -81,11 +80,9 @@ export default Vue.extend({
       },
     },
   },
-  created() {
-    this.$store.dispatch('getBoard', this.$route.params.board_id)
-      .catch((err: Error) => {
-        console.error('Error getting board:', err);
-      });
+  async mounted() {
+    await this.$store.dispatch('getBoard', this.$route.params.board_id);
+    this.$data.formSchema.fields[1].value = this.$store.state.board?.lists?.length ?? 0;
   },
 });
 </script>
