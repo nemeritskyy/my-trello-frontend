@@ -1,12 +1,5 @@
 <template>
-  <div class="card__item" :id="'container-' + id"
-       @dragenter.prevent="onDragEnter"
-  >
-    <div class="card__item-footer">
-      <button @click="openModal" class="button__add">
-        <span>Create Card</span>
-      </button>
-    </div>
+  <div>
     <div class="card__item-title">
       <LabelEditable
         v-model="listTitle"
@@ -17,16 +10,25 @@
         custom-class="cart__item-label"
       />
     </div>
-    <div v-for="card in cards" :key="card.id"
-         :id="`card-${card.id}`"
-         class="card__item-row break-word"
-         draggable="true"
-         @dragstart="onDragStart($event, card.id)"
-         @dragover="onDragOver($event)"
-         @dragend.prevent="onDragEnd">
-      {{ card.title }}
+    <div class="card__item" :id="'container-' + id"
+         @dragenter.prevent="onDragEnter"
+    >
+      <div v-for="card in cards" :key="card.id"
+           :id="`card-${card.id}`"
+           class="card__item-row break-word"
+           draggable="true"
+           @dragstart="onDragStart($event, card.id)"
+           @dragover="onDragOver($event)"
+           @dragend.prevent="onDragEnd">
+        {{ card.title }}
+      </div>
+      <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema"/>
     </div>
-    <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema"/>
+    <div class="card__item-footer">
+      <button @click="openModal" class="list-button__add">
+        <span>Create Card</span>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -34,6 +36,8 @@
 import Vue from 'vue';
 import Modal from '@/components/Modal.vue';
 import { ICard } from '@/common/interfaces/card';
+import { IList } from '@/common/interfaces/list';
+import { IDragItem } from '@/common/interfaces/dragItem';
 import LabelEditable from './LabelEditable.vue';
 
 export default Vue.extend({
@@ -93,12 +97,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    draggingIndex: {
-      get(): string {
-        return this.$store.state.draggingElement;
-      },
-      set(newDraggableElement: string) {
-        this.$store.commit('setDraggingElement', newDraggableElement);
+    draggingElementDetails() {
+      return this.$store.getters.draggingElementDetails;
+    },
+    updatedPosition: {
+      get(): number {
+        return this.$store.state.newPosition;
       },
     },
     listTitle: {
@@ -108,9 +112,15 @@ export default Vue.extend({
     },
   },
   methods: {
+    updateDraggingElement(newDetails: Partial<IDragItem>) {
+      this.$store.commit('updateDraggingElementDetails', newDetails);
+    },
+    setDraggingElement(newDetails: IDragItem | null) {
+      this.$store.commit('setDraggingElementDetails', newDetails);
+    },
     getNextPosition(): number {
       const lists = this.$store.state.board.lists?.find(
-        (list: { id: number; cards: ICard[] }) => list.id === this.id,
+        (list: IList) => list.id === this.id,
       );
       if (!lists || !lists.cards || lists.cards.length === 0) {
         return 0;
@@ -125,51 +135,231 @@ export default Vue.extend({
       }
       this.showModal = true;
     },
+    findCardById(cardId: number) {
+      return this.$store.state.board.lists
+        .map((list: IList) => list.cards?.find((card: ICard) => card.id === cardId))
+        .find((foundCard: ICard | undefined) => foundCard !== undefined) || null;
+    },
     onDragStart(event: DragEvent, cardId: string) {
-      this.draggingIndex = cardId;
       const draggedItem = event.target as HTMLElement;
+      this.updateDraggingElement(
+        {
+          id: Number(cardId),
+          parentContainer: Number((draggedItem.parentElement as HTMLElement).id.substring(10)),
+          newContainerId: Number((draggedItem.parentElement as HTMLElement).id.substring(10)),
+          position: this.findCardById(Number(cardId)).position,
+        },
+      );
       if (draggedItem) {
         setTimeout(() => draggedItem.classList.add('drag__item-clear'), 0);
       }
     },
     onDragEnd(event: DragEvent) {
-      const draggedItem = event.target as HTMLElement;
-      if (draggedItem) {
-        draggedItem.classList.remove('hidden', 'drag__item-clear');
+      const draggedHTMLItem = event.target as HTMLElement;
+      if (!draggedHTMLItem) return;
+
+      draggedHTMLItem.classList.remove('hidden', 'drag__item-clear');
+
+      const {
+        id,
+        parentContainer,
+        position,
+        newContainerId,
+        newPosition,
+      } = this.draggingElementDetails;
+
+      const oldList = this.getListWithCardContainerId(parentContainer);
+      const newList = this.getListWithCardContainerId(newContainerId);
+
+      if (!oldList || !newList) return;
+
+      oldList.cards = oldList.cards ?? [];
+      newList.cards = newList.cards ?? [];
+      const draggingCard = oldList.cards.find((card: ICard) => card.id === id);
+      if (!draggingCard) return;
+
+      // Remove card from old container
+      oldList.cards = oldList.cards.filter((card: ICard) => card.id !== id);
+
+      const updatedCards = [];
+
+      if (parentContainer === newContainerId) {
+        oldList.cards = oldList.cards
+          .filter((card: ICard) => card.id !== draggingCard.id)
+          .map((card: ICard) => {
+            if (newPosition > position) {
+              // Move down
+              if (card.position > position && card.position <= newPosition) {
+                const updatedCard = {
+                  ...card,
+                  position: card.position - 1,
+                };
+                updatedCards.push({
+                  id: updatedCard.id,
+                  position: updatedCard.position,
+                  list_id: parentContainer,
+                });
+                return updatedCard;
+              }
+            } else if (newPosition < position) {
+              // Move up
+              if (card.position >= newPosition && card.position < position) {
+                const updatedCard = {
+                  ...card,
+                  position: card.position + 1,
+                };
+                updatedCards.push({
+                  id: updatedCard.id,
+                  position: updatedCard.position,
+                  list_id: parentContainer,
+                });
+                return updatedCard;
+              }
+            }
+            return card;
+          });
+
+        // Update position for dragging card
+        draggingCard.position = newPosition;
+        oldList.cards.splice(newPosition, 0, draggingCard);
+
+        updatedCards.push({
+          id: draggingCard.id,
+          position: newPosition,
+          list_id: parentContainer,
+        });
+      } else {
+        // If the card moved into new container
+        // Update positions for other cards in the old container
+        oldList.cards = oldList.cards.map((card: ICard) => {
+          if (card.position > position) {
+            const updatedCard = {
+              ...card,
+              position: card.position - 1,
+            };
+            updatedCards.push({
+              id: updatedCard.id,
+              position: updatedCard.position,
+              list_id: parentContainer,
+            });
+            return updatedCard;
+          }
+          return card; // Without changes
+        });
+
+        // Add card into new container with new position
+        const insertPosition = newPosition !== undefined ? newPosition : newList.cards.length;
+
+        newList.cards.splice(insertPosition, 0, {
+          ...draggingCard,
+          position: insertPosition,
+        });
+
+        // Update positions in the new container
+        newList.cards = newList.cards.map((card: ICard, index: number) => {
+          if (card.position !== index) {
+            const updatedCard = {
+              ...card,
+              position: index,
+            };
+            updatedCards.push({
+              id: updatedCard.id,
+              position: updatedCard.position,
+              list_id: newContainerId,
+            });
+            return updatedCard;
+          }
+          return card; // Without changes
+        });
+
+        // Details for old container
+        updatedCards.push({
+          id: draggingCard.id,
+          position,
+          list_id: parentContainer,
+        });
+
+        // Details for new container
+        updatedCards.push({
+          id: draggingCard.id,
+          position: insertPosition,
+          list_id: newContainerId,
+        });
       }
+
+      this.$store.dispatch('updateCardsInAPI', {
+        boardId: this.$route.params.board_id,
+        cardsToUpdate: updatedCards,
+      });
+
+      this.setDraggingElement(null);
     },
     onDragEnter(event: DragEvent) {
       const container = event.currentTarget as HTMLElement;
-      const draggedItem = document.getElementById(`card-${this.draggingIndex}`);
+      const draggedItem = document.getElementById(`card-${this.draggingElementDetails.id}`);
       if (!draggedItem) return;
       if (draggedItem.parentElement !== container) {
         // Join into new container
+        this.updateDraggingElement(
+          {
+            newContainerId: Number(container.id.substring(10)),
+            newPosition: container.children.length,
+          },
+        );
         draggedItem.parentElement?.removeChild(draggedItem);
         container.appendChild(draggedItem);
       }
     },
     onDragOver(event: DragEvent) {
-      const targetItem = event.target as HTMLElement;
-      if (targetItem.id) {
-        if (this.cards.some((el) => el.id === Number(targetItem.id.substring(5)))) {
-          const draggedItem = document.getElementById(`card-${this.draggingIndex}`);
-          if (draggedItem) {
-            const rect = targetItem.getBoundingClientRect();
-            const middle = rect.top + rect.height / 2;
+      event.preventDefault();
 
-            if (event.clientY < middle) { // Add item above
-              targetItem.parentNode?.insertBefore(draggedItem, targetItem);
-            } else {
-              const nextElement = targetItem.nextElementSibling;
-              if (nextElement) {
-                targetItem.parentNode?.insertBefore(draggedItem, nextElement);
-              } else { // Add item below
-                targetItem.parentNode?.appendChild(draggedItem);
-              }
-            }
-          }
-        }
+      const targetItem = event.target as HTMLElement;
+      if (!targetItem.id) return;
+
+      const targetId = Number(targetItem.id.replace('card-', ''));
+      if (!this.cards.some((el) => el.id === targetId)) return;
+
+      const draggedItem = document.getElementById(`card-${this.draggingElementDetails.id}`);
+      if (!draggedItem || draggedItem === targetItem) {
+        return;
       }
+
+      const rect = targetItem.getBoundingClientRect();
+      const middleY = rect.top + rect.height / 2;
+      const parent = targetItem.parentNode;
+      if (!parent) return;
+
+      const childrenArray = Array.from(parent.children);
+      let newPosition = childrenArray.indexOf(targetItem);
+
+      if (event.clientY > middleY) {
+        newPosition += 1;
+      }
+
+      // If already on the same place
+      const currentIndex = childrenArray.indexOf(draggedItem);
+      if (newPosition === currentIndex) return;
+
+      // Paste item into new place
+      const referenceElement = newPosition < childrenArray.length
+        ? childrenArray[newPosition] : null;
+      parent.insertBefore(draggedItem, referenceElement);
+
+      // Recalculate indexes after inserting
+      const updatedChildrenArray = Array.from(parent.children);
+      const updatedPosition = updatedChildrenArray.indexOf(draggedItem);
+
+      this.setNewPosition(updatedPosition);
+    },
+    getListWithCardContainerId(listId: number) {
+      return this.$store.state.board.lists?.find((list: IList) => list.id === listId);
+    },
+    setNewPosition(newPosition: number) {
+      this.updateDraggingElement(
+        {
+          newPosition,
+        },
+      );
     },
   },
 });
@@ -196,7 +386,8 @@ export default Vue.extend({
   padding: 0;
   display: flex;
   background-color: white;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   min-height: 48px;
   align-items: center;
   justify-content: center;
@@ -212,8 +403,8 @@ export default Vue.extend({
   justify-content: flex-start;
   background-color: lightpink;
   padding: 16px;
-  border: 1px solid crimson;
-  border-radius: 8px;
+  //border: 1px solid crimson;
+  //border-radius: 8px;
   border-collapse: collapse;
   box-shadow: rgba(0, 0, 0, 0.24) 0 3px 30px;
   min-width: 200px;
@@ -230,6 +421,27 @@ export default Vue.extend({
   background-color: #ffed83;
   border-radius: 5px;
   border: 1px solid transparent;
+}
+
+.list-button__add {
+  width: 100%;
+  display: flex;
+  border-radius: 0px;
+  background-color: #9BC53D;
+  padding: 16px;
+  align-items: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+
+  &:hover {
+    color: #FDE74C;
+  }
 }
 
 .dragging {
