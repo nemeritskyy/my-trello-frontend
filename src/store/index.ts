@@ -3,6 +3,7 @@ import { IBoard } from '@/common/interfaces/board';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { IDragItem } from '@/common/interfaces/dragItem';
+import { ICard } from '@/common/interfaces/card';
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     user: {},
     defaultMinLength: 2,
     draggingElementDetails: {} as IDragItem,
+    editableCard: {} as ICard | null,
   },
   getters: {
     boards: (state) => state.boards.data || [],
@@ -34,7 +36,12 @@ export default new Vuex.Store({
     UPDATE_BOARD(state, board) {
       state.board = board;
     },
-
+    setEditableCard(state, payload: ICard) {
+      state.editableCard = payload || {} as ICard;
+    },
+    clearEditableCard(state) {
+      state.editableCard = null;
+    },
   },
   actions: {
     async getBoards({ commit }) {
@@ -49,7 +56,6 @@ export default new Vuex.Store({
       try {
         const response = await api.get(`/board/${boardId}`);
         commit('UPDATE_BOARD', response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Failed to fetch boards:', error);
       }
@@ -84,6 +90,10 @@ export default new Vuex.Store({
       } catch (error) {
         console.error(`Failed to update title apiPath ${apiPath}:`, error);
       }
+    },
+    async editCard({ dispatch }, payload) {
+      await api.put(payload.submitUrlPath, payload.boardData);
+      await dispatch('getBoard', payload.boardId);
     },
     async createEntity({ dispatch }, {
       submitUrlPath,

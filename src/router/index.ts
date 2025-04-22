@@ -15,6 +15,11 @@ const routes: Array<RouteConfig> = [
     name: 'board',
     component: () => import('../views/BoardView.vue'),
   },
+  {
+    path: '/board/:boardId/card/:cardId',
+    name: 'card',
+    component: () => import('../views/BoardView.vue'),
+  },
 ];
 
 const router = new VueRouter({

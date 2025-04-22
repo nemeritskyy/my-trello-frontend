@@ -13,16 +13,19 @@
     <div class="card__item" :id="'container-' + id"
          @dragenter.prevent="onDragEnter"
     >
-      <div v-for="card in cards" :key="card.id"
-           :id="`card-${card.id}`"
-           class="card__item-row break-word"
-           draggable="true"
-           @dragstart="onDragStart($event, card.id)"
-           @dragover="onDragOver($event)"
-           @dragend.prevent="onDragEnd">
+      <button v-for="card in cards" :key="card.id"
+              :id="`card-${card.id}`"
+              class="card__item-row break-word"
+              :style="{ backgroundColor: card.color }"
+              draggable="true"
+              @click="editCard(card.id)"
+              @dragstart="onDragStart($event, card.id)"
+              @dragover="onDragOver($event)"
+              @dragend.prevent="onDragEnd">
         {{ card.title }}
-      </div>
+      </button>
       <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema"/>
+      <Modal v-if="cardModal" @close="handleModalClose" :formSchema="formCardSchema"/>
     </div>
     <div class="card__item-footer">
       <button @click="openModal" class="list-button__add">
@@ -63,6 +66,7 @@ export default Vue.extend({
   data() {
     return {
       showModal: false,
+      cardModal: false,
       formSchema: {
         formName: `Add New Card to ${this.title}`,
         fields: [
@@ -72,6 +76,18 @@ export default Vue.extend({
             type: 'text',
             required: true,
             minLength: 3,
+          },
+          {
+            name: 'description',
+            label: 'Description',
+            type: 'textarea',
+            required: false,
+            minLength: 3,
+          },
+          {
+            name: 'color',
+            label: 'Color',
+            type: 'color',
           },
           {
             name: 'list_id',
@@ -94,6 +110,43 @@ export default Vue.extend({
         actionName: 'createCard',
         submitUrlPath: `/board/${this.$route.params.board_id}/card`,
       },
+      formCardSchema: {
+        formName: 'Edit Card',
+        fields: [
+          {
+            name: 'title',
+            label: 'Title',
+            type: 'text',
+            required: true,
+            minLength: 3,
+            value: '',
+          },
+          {
+            name: 'description',
+            label: 'Description',
+            type: 'textarea',
+            required: false,
+            minLength: 3,
+            value: '',
+          },
+          {
+            name: 'color',
+            label: 'Color',
+            type: 'color',
+            required: true,
+            value: '',
+          },
+          {
+            name: 'list_id',
+            label: 'List ID',
+            visible: false,
+            value: this.id,
+          },
+        ],
+        actionName: 'editCard',
+        submitUrlPath: '',
+        boardId: this.$route.params.board_id,
+      },
     };
   },
   computed: {
@@ -112,6 +165,15 @@ export default Vue.extend({
     },
   },
   methods: {
+    handleModalClose() {
+      this.cardModal = false;
+      this.updateRoute();
+      this.$store.commit('clearEditableCard');
+      console.log(this.$store.state.editableCard);
+    },
+    updateRoute() {
+      this.$router.push(`/board/${this.$route.params.boardId}`);
+    },
     updateDraggingElement(newDetails: Partial<IDragItem>) {
       this.$store.commit('updateDraggingElementDetails', newDetails);
     },
@@ -134,6 +196,17 @@ export default Vue.extend({
         positionField.value = this.getNextPosition();
       }
       this.showModal = true;
+    },
+    editCard(cardId: number) {
+      this.formCardSchema.submitUrlPath = `/board/${this.$route.params.board_id}/card/${cardId}`;
+      this.$router.push(`/board/${this.$route.params.board_id}/card/${cardId}`);
+      console.log(`CardID:${cardId}`);
+      console.log(this.$store.state.board);
+      this.$store.commit('setEditableCard', this.findCardById(cardId));
+      this.formCardSchema.fields[0].value = this.$store.state.editableCard?.title;
+      this.formCardSchema.fields[1].value = this.$store.state.editableCard?.description;
+      this.formCardSchema.fields[2].value = this.$store.state.editableCard?.color;
+      this.cardModal = true;
     },
     findCardById(cardId: number) {
       return this.$store.state.board.lists
@@ -422,6 +495,7 @@ export default Vue.extend({
   background-color: #ffed83;
   border-radius: 5px;
   border: 1px solid transparent;
+  cursor: text;
 }
 
 .list-button__add {

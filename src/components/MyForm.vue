@@ -14,6 +14,14 @@
           :min="field.min"
           :max="field.max"
         />
+        <textarea
+          v-else-if="field.type === 'textarea'"
+          :id="field.name"
+          v-model="formData[field.name]"
+          :required="field.required"
+          :minlength="field.minLength"
+          :maxlength="field.maxLength"
+        />
         <input
           v-else
           type="hidden"
@@ -21,7 +29,7 @@
           v-model="formData[field.name]"
         /></label>
     </div>
-    <button type="submit" class="button__add">Add</button>
+    <button type="submit" class="button__add">Submit</button>
   </form>
 </template>
 
@@ -51,6 +59,7 @@ export default {
       await this.$store.dispatch(this.formSchema.actionName, {
         submitUrlPath: this.formSchema.submitUrlPath,
         boardData: this.formData,
+        boardId: this.formSchema.boardId,
       });
       this.$emit('submit', this.formData);
     },
