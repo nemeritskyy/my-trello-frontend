@@ -153,6 +153,12 @@ export default Vue.extend({
       },
     };
   },
+  mounted() {
+    const cardId = Number(this.$route.params.card_id);
+    if (!this.cardModal && cardId && this.cards.some((card) => card.id === cardId)) {
+      this.editCard(cardId);
+    }
+  },
   computed: {
     draggingElementDetails() {
       return this.$store.getters.draggingElementDetails;
@@ -203,7 +209,13 @@ export default Vue.extend({
     },
     editCard(cardId: number) {
       this.formCardSchema.submitUrlPath = `/board/${this.$route.params.board_id}/card/${cardId}`;
-      this.$router.push(`/board/${this.$route.params.board_id}/card/${cardId}`);
+
+      const boardId = this.$route.params.board_id;
+      const targetPath = `/board/${boardId}/card/${cardId}`;
+
+      if (this.$route.path !== targetPath) {
+        this.$router.push(targetPath);
+      }
       console.log(`CardID:${cardId}`);
       console.log(this.$store.state.board);
       this.$store.commit('setEditableCard', this.findCardById(cardId));
