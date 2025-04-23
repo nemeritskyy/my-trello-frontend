@@ -95,6 +95,14 @@ export default new Vuex.Store({
       await api.put(payload.submitUrlPath, payload.boardData);
       await dispatch('getBoard', payload.boardId);
     },
+    async removeCard({ dispatch }, payload) {
+      await api.delete(`/board/${payload.boardId}/card/${payload.cardId}`);
+      await dispatch('getBoard', payload.boardId);
+    },
+    async removeBoard({ dispatch }, boardId) {
+      await api.delete(`/board/${boardId}`);
+      await dispatch('getBoards');
+    },
     async createEntity({ dispatch }, {
       submitUrlPath,
       boardData,

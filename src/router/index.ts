@@ -16,7 +16,7 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/BoardView.vue'),
   },
   {
-    path: '/board/:boardId/card/:cardId',
+    path: '/board/:board_id/card/:card_id',
     name: 'card',
     component: () => import('../views/BoardView.vue'),
   },

@@ -23,7 +23,11 @@
               @dragover="onDragOver($event)"
               @dragend.prevent="onDragEnd">
         {{ card.title }}
+        <button class="button_rmv material-symbols-outlined"
+                @click.stop="removeCard(card.id)">delete
+        </button>
       </button>
+
       <Modal v-if="showModal" @close="showModal = false" :formSchema="formSchema"/>
       <Modal v-if="cardModal" @close="handleModalClose" :formSchema="formCardSchema"/>
     </div>
@@ -172,7 +176,7 @@ export default Vue.extend({
       console.log(this.$store.state.editableCard);
     },
     updateRoute() {
-      this.$router.push(`/board/${this.$route.params.boardId}`);
+      this.$router.push(`/board/${this.$route.params.board_id}`);
     },
     updateDraggingElement(newDetails: Partial<IDragItem>) {
       this.$store.commit('updateDraggingElementDetails', newDetails);
@@ -207,6 +211,12 @@ export default Vue.extend({
       this.formCardSchema.fields[1].value = this.$store.state.editableCard?.description;
       this.formCardSchema.fields[2].value = this.$store.state.editableCard?.color;
       this.cardModal = true;
+    },
+    removeCard(cardId: number) {
+      this.$store.dispatch('removeCard', {
+        boardId: this.$route.params.board_id,
+        cardId,
+      });
     },
     findCardById(cardId: number) {
       return this.$store.state.board.lists
@@ -487,6 +497,7 @@ export default Vue.extend({
 }
 
 .card__item-row {
+  position: relative;
   font-family: "Montserrat", sans-serif;
   display: flex;
   align-items: center;
@@ -530,6 +541,10 @@ export default Vue.extend({
   box-shadow: 2px 2px 5px rgba(144, 144, 144, 0.39);
   border: 1px solid gray;
   color: transparent;
+
+  .button_rmv {
+    visibility: hidden;
+  }
 }
 
 .hidden {

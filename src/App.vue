@@ -6,14 +6,33 @@
       </div>
     </div>
     <nav>
+      <div v-if="$route.params.board_id">
+        <button class="button_rmv material-symbols-outlined"
+                @click="removeBoard">delete
+        </button>
+      </div>
       <router-link to="/">All desks</router-link>
     </nav>
     <router-view/>
   </div>
 </template>
 
+<script lang="ts">
+import router from '@/router';
+
+export default {
+  methods: {
+    removeBoard() {
+      this.$store.dispatch('removeBoard', this.$route.params.board_id);
+      router.push('/');
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
 
 html, body {
   margin: 0;
@@ -88,6 +107,24 @@ a {
   &:hover {
     color: #FDE74C;
   }
+}
+
+.button_rmv {
+  z-index: 10;
+  position: absolute;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
 }
 
 .lds-circle,
