@@ -11,14 +11,19 @@ const routes: Array<RouteConfig> = [
     component: HomeView,
   },
   {
-    path: '/board',
+    path: '/board/:board_id',
     name: 'board',
+    component: () => import('../views/BoardView.vue'),
+  },
+  {
+    path: '/board/:board_id/card/:card_id',
+    name: 'card',
     component: () => import('../views/BoardView.vue'),
   },
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes,
 });
