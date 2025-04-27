@@ -5,29 +5,43 @@
         <div></div>
       </div>
     </div>
-    <nav>
-      <div v-if="$route.params.board_id">
-        <button class="button_rmv material-symbols-outlined"
-                @click="removeBoard">delete
-        </button>
-      </div>
-      <router-link to="/">All desks</router-link>
+    <div v-if="$route.params.board_id">
+      <button class="button_rmv material-symbols-outlined"
+              @click="removeBoard">delete
+      </button>
+    </div>
+    <nav v-show="isAuthenticated">
+      <router-link to="/" class="nav-button">All desks</router-link>
+      <button @click="logout" class="nav-button">
+        <span class="material-symbols-outlined">
+          logout
+        </span>
+      </button>
     </nav>
     <router-view/>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import router from '@/router';
+import { mapState } from 'vuex';
 
-export default {
+export default defineComponent({
+  computed: {
+    ...mapState(['isAuthenticated']),
+  },
   methods: {
     removeBoard() {
       this.$store.dispatch('removeBoard', this.$route.params.board_id);
       router.push('/');
     },
+    logout() {
+      this.$store.commit('LOGOUT');
+      router.push('/login');
+    },
   },
-};
+});
 </script>
 
 <style lang="scss">
@@ -72,12 +86,13 @@ body {
 }
 
 nav {
-  display: block;
+  display: flex;
   padding: 10px;
   background-color: white;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   margin: 0 auto;
+  gap: 10px;
 }
 
 a {
@@ -112,6 +127,7 @@ a {
 .button_rmv {
   z-index: 10;
   position: absolute;
+  top: 10px;
   right: 10px;
   width: 20px;
   height: 20px;
@@ -175,5 +191,32 @@ a {
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
+}
+
+.nav-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.nav-button .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.nav-button:hover {
+  background-color: #ff3333;
+  transform: scale(1.05);
+}
+
+.nav-button:active {
+  transform: scale(0.98);
 }
 </style>

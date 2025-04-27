@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+import LoginView from '@/views/LoginView.vue';
 import HomeView from '../views/HomeView.vue';
 
 Vue.use(VueRouter);
@@ -9,6 +10,11 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'home',
     component: HomeView,
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
   },
   {
     path: '/board/:board_id',

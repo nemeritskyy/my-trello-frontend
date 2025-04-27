@@ -1,4 +1,4 @@
-import api from '@/api/index';
+import api, { setStore } from '@/api/index';
 import { IBoard } from '@/common/interfaces/board';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -7,7 +7,7 @@ import { ICard } from '@/common/interfaces/card';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     board: {} as IBoard,
     boards: {
@@ -17,6 +17,7 @@ export default new Vuex.Store({
     defaultMinLength: 2,
     draggingElementDetails: {} as IDragItem,
     editableCard: {} as ICard | null,
+    isAuthenticated: !!localStorage.getItem('token'),
   },
   getters: {
     boards: (state) => state.boards.data || [],
@@ -41,6 +42,16 @@ export default new Vuex.Store({
     },
     clearEditableCard(state) {
       state.editableCard = null;
+    },
+    SET_AUTH(state, tokens) {
+      localStorage.setItem('token', tokens.token);
+      localStorage.setItem('refreshToken', tokens.refreshToken);
+      state.isAuthenticated = true;
+    },
+    LOGOUT(state) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      state.isAuthenticated = false;
     },
   },
   actions: {
@@ -118,7 +129,10 @@ export default new Vuex.Store({
         console.error(`Failed to create entity at ${submitUrlPath}:`, error);
       }
     },
-    async updateCardsInAPI({ dispatch }, { boardId, cardsToUpdate }) {
+    async updateCardsInAPI({ dispatch }, {
+      boardId,
+      cardsToUpdate,
+    }) {
       try {
         const payload = JSON.stringify(cardsToUpdate);
         const apiPath = `/board/${boardId}/card`;
@@ -127,6 +141,37 @@ export default new Vuex.Store({
         console.error('Failed to update cards:', error);
       }
     },
+    async login({ commit }, payload) {
+      try {
+        const response = await api.post('/login', payload);
+        if (response.data.result === 'Authorized') {
+          commit('SET_AUTH', response.data);
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+      }
+
+      return false;
+    },
+    async updateRefreshToken({ commit }) {
+      try {
+        const response = await api.post('/refresh', { refreshToken: localStorage.getItem('refreshToken') });
+        console.log(response);
+        if (response.data.result === 'Authorized') {
+          commit('SET_AUTH', response.data);
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during updating refresh:', error);
+      }
+      commit('LOGOUT');
+      return false;
+    },
   },
   modules: {},
 });
+
+setStore(store);
+
+export default store;
