@@ -1,4 +1,3 @@
-import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
 import router from '@/router';
@@ -10,14 +9,6 @@ let storeInstance: Store<any> | null = null;
 export const setStore = (store: Store<any>) => {
   storeInstance = store;
 };
-
-const notyf = new Notyf({
-  duration: 4000,
-  position: {
-    x: 'right',
-    y: 'top',
-  },
-});
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_API_URL || '',
@@ -49,7 +40,7 @@ instance.interceptors.request.use(
   },
   (error) => {
     toggleLoader('hide');
-    notyf.error(error.response?.data?.message || 'Request error');
+    storeInstance?.state.notyf.error(error.response?.data?.message || 'Request error');
     return Promise.reject(error);
   },
 );
@@ -80,7 +71,7 @@ instance.interceptors.response.use(
     if (error.response?.status === 401) {
       const message = error.response?.data?.error;
       if (message) {
-        notyf.error(message);
+        storeInstance?.state.notyf.error(message);
       }
 
       toggleLoader('hide');
@@ -88,7 +79,7 @@ instance.interceptors.response.use(
         router.push('/login');
       }
     } else {
-      notyf.error(error.response?.data?.message || 'Request error');
+      storeInstance?.state.notyf.error(error.response?.data?.message || 'Request error');
     }
     return Promise.reject(error);
   },

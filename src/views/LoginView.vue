@@ -72,7 +72,7 @@ export default Vue.extend({
       }
     },
     register() {
-      // this.$router.push('/register');
+      this.$router.push('/register');
     },
   },
 });

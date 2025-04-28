@@ -4,6 +4,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { IDragItem } from '@/common/interfaces/dragItem';
 import { ICard } from '@/common/interfaces/card';
+import { Notyf } from 'notyf';
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ const store = new Vuex.Store({
     draggingElementDetails: {} as IDragItem,
     editableCard: {} as ICard | null,
     isAuthenticated: !!localStorage.getItem('token'),
+    notyf: {} as Notyf,
   },
   getters: {
     boards: (state) => state.boards.data || [],
@@ -52,6 +54,9 @@ const store = new Vuex.Store({
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       state.isAuthenticated = false;
+    },
+    setNotyf(state, payload: Notyf) {
+      state.notyf = payload;
     },
   },
   actions: {
@@ -151,7 +156,17 @@ const store = new Vuex.Store({
       } catch (error) {
         console.error('Error during login:', error);
       }
-
+      return false;
+    },
+    async register({ commit }, payload) {
+      try {
+        const response = await api.post('/user', payload);
+        if (response.data.result === 'Created') {
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during register:', error);
+      }
       return false;
     },
     async updateRefreshToken({ commit }) {
@@ -171,6 +186,16 @@ const store = new Vuex.Store({
   },
   modules: {},
 });
+
+const notyfInstance = new Notyf({
+  duration: 4000,
+  position: {
+    x: 'right',
+    y: 'top',
+  },
+});
+
+store.commit('setNotyf', notyfInstance);
 
 setStore(store);
 
